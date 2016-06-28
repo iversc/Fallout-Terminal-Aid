@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Word"
+        android:id="@+id/txtWord"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:paddingLeft="16dp" />
+
+    <CheckBox
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Possible"
+        android:id="@+id/cbMatches"
+        android:enabled="true"
+        android:checked="true"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false" />
+</LinearLayout>
