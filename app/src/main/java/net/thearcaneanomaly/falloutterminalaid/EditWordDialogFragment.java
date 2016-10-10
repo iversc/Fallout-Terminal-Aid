@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 /**
@@ -28,7 +29,7 @@ public class EditWordDialogFragment  extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                Toast.makeText(getActivity(), "OK Pressed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Edit Pressed", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -39,6 +40,15 @@ public class EditWordDialogFragment  extends DialogFragment {
             }
         });
 
-        return builder.create();
+        builder.setNeutralButton(R.string.edit_word_dialog_button_delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getActivity(), "Delete pressed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        Dialog d = builder.create();
+        d.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        return d;
     }
 }
