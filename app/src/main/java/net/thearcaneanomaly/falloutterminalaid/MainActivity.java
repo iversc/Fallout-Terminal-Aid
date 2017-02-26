@@ -1,5 +1,6 @@
 package net.thearcaneanomaly.falloutterminalaid;
 
+import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,8 +19,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     public final static String SELECTED_WORD = "net.thearcaneanomaly.falloutterminalaid.SELECTED_WORD";
     public final static String SELECTED_INDEX = "net.thearcaneanomaly.falloutterminalaid.SELECTED_INDEX";
     public final static String WORD_LENGTH = "net.thearcaneanomaly.falloutterminalaid.WORD_LENGTH";
-    public final static int REQUEST_ADD = 1;
-    public final static int REQUEST_EDIT = 2;
     public final static int RESULT_DELETE = 1;
     public final static int RESULT_EDITED = 2;
 
@@ -73,18 +72,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        if (id == R.id.action_add) {
-            //Toast.makeText(this, "Add", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(this, WordSelectActivity.class);
-            intent.putExtra(WORD_LENGTH, wordLength);
-            startActivityForResult(intent, REQUEST_ADD);
-        }
-
         if (id == R.id.action_reset_match)
         {
             for(Word w : arrayWords)
@@ -109,7 +96,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         if(wordLength == 0) wordLength = newWord.getWord().length();
 
-        Toast.makeText(this, et.getText(), Toast.LENGTH_SHORT).show();
+        et.getText().clear();
     }
 
     protected boolean validate(String word, String numCorrect)
@@ -141,86 +128,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Word w = arrayWords.get(position);
-        //Toast.makeText(this, "You selected: " + w.getWord(),
-        //        Toast.LENGTH_SHORT).show();
-        //Intent i = new Intent(this, WordSelectActivity.class);
 
-        //i.putExtra(SELECTED_WORD, w);
-        //i.putExtra(SELECTED_INDEX, position);
-        //i.putExtra(WORD_LENGTH, wordLength);
-        //startActivityForResult(i, REQUEST_EDIT);
         EditWordDialogFragment ewdf = new EditWordDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("word", w);
+        bundle.putInt("index", position);
         ewdf.setArguments(bundle);
         ewdf.show(getFragmentManager(), "EditWordDialogFragment");
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == REQUEST_ADD) {
-            if (resultCode == RESULT_OK) {
-                Word newWord = data.getParcelableExtra(SELECTED_WORD);
-
-                arrayWords.add(newWord);
-
-                updateList();
-
-                if (wordLength == 0) wordLength = newWord.getWord().length();
-            }
-        } else if (requestCode == REQUEST_EDIT) {
-            if (resultCode == RESULT_EDITED) {
-                int selected = data.getIntExtra(SELECTED_INDEX, 0);
-                Word w = data.getParcelableExtra(SELECTED_WORD);
-
-                arrayWords.set(selected, w);
-                int numCharacters = w.getCorrect();
-                String editedWord = w.getWord();
-                int numMatches = 0;
-
-                String lastMatch = null;
-
-                for(Word word : arrayWords)
-                {
-                    //Skip ones already ruled out
-                    if(!word.isMatch()) continue;
-
-                    //Skip the one we just changed
-                    if(w.getWord().equals(word.getWord())) continue;
-
-                    try
-                    {
-                        word.setMatch( (word.numSameChars(editedWord) == numCharacters) );
-                    }
-                    catch (InvalidArgumentException e)
-                    {
-                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-
-                    if(word.isMatch())
-                    {
-                        lastMatch = word.getWord();
-                        numMatches++;
-                    }
-                }
-
-                updateList();
-                if(numMatches == 1)
-                {
-                    Toast.makeText(this, "Possible match: " + lastMatch, Toast.LENGTH_SHORT).show();
-                }
-
-            } else if (resultCode == RESULT_DELETE) {
-                int selected = data.getIntExtra(SELECTED_INDEX, 0);
-
-                arrayWords.remove(selected);
-                updateList();
-
-                if (arrayWords.isEmpty()) wordLength = 0;
-            }
-        }
     }
 
     protected void updateList() {
@@ -232,5 +146,54 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putParcelableArrayList(WORD_ARRAY, arrayWords);
+    }
+
+    public void onEditWordResult(Word word, int selectedIndex, int resultCode) {
+
+        if (resultCode == RESULT_EDITED) {
+            arrayWords.set(selectedIndex, word);
+            int numCharacters = word.getCorrect();
+            String editedWord = word.getWord();
+            int numMatches = 0;
+
+            String lastMatch = null;
+
+            for(Word w : arrayWords)
+            {
+                //Skip ones already ruled out
+                if(!w.isMatch()) continue;
+
+                //Skip the one we just changed
+                if(w.getWord().equals(word.getWord())) continue;
+
+                try
+                {
+                    w.setMatch( (w.numSameChars(editedWord) == numCharacters) );
+                }
+                catch (InvalidArgumentException e)
+                {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    break;
+                }
+
+                if(w.isMatch())
+                {
+                    lastMatch = w.getWord();
+                    numMatches++;
+                }
+            }
+
+            updateList();
+            if(numMatches == 1)
+            {
+                Toast.makeText(this, "Possible match: " + lastMatch, Toast.LENGTH_SHORT).show();
+            }
+
+        } else if (resultCode == RESULT_DELETE) {
+            arrayWords.remove(selectedIndex);
+            updateList();
+
+            if (arrayWords.isEmpty()) wordLength = 0;
+        }
     }
 }

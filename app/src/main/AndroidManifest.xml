@@ -17,14 +17,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="net.thearcaneanomaly.falloutterminalaid.WordSelectActivity"
-            android:label="@string/title_activity_word_select"
-            android:parentActivityName="net.thearcaneanomaly.falloutterminalaid.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.thearcaneanomaly.falloutterminalaid.MainActivity" />
-        </activity>
     </application>
 
 </manifest>
