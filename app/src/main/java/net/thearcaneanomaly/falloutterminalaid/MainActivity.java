@@ -1,8 +1,8 @@
 package net.thearcaneanomaly.falloutterminalaid;
 
 import android.content.DialogInterface;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends Activity implements AdapterView.OnItemClickListener {
     public final static String SELECTED_WORD = "net.thearcaneanomaly.falloutterminalaid.SELECTED_WORD";
     public final static String SELECTED_INDEX = "net.thearcaneanomaly.falloutterminalaid.SELECTED_INDEX";
     public final static String WORD_LENGTH = "net.thearcaneanomaly.falloutterminalaid.WORD_LENGTH";
